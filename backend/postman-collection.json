@@ -1,0 +1,325 @@
+{
+  "info": {
+    "name": "Backend Node.js - Ofertas API",
+    "description": "Collection completa para testar a API de autenticação e ofertas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Cadastrar Usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.environment.set('auth_token', responseJson.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"password\": \"MinhaSenh@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.environment.set('auth_token', responseJson.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@email.com\",\n  \"password\": \"MinhaSenh@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Obter Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva Santos\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ofertas",
+      "item": [
+        {
+          "name": "Criar Oferta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.environment.set('offer_id', responseJson.data.offer._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Smartphone Samsung Galaxy S23\",\n  \"description\": \"Smartphone top de linha com câmera de 200MP e processador Snapdragon\",\n  \"category\": \"tecnologia\",\n  \"originalPrice\": 2999.99,\n  \"discountPrice\": 2399.99,\n  \"validUntil\": \"2024-12-31T23:59:59.000Z\",\n  \"tags\": [\"smartphone\", \"samsung\", \"android\"],\n  \"imageUrl\": \"https://exemplo.com/imagem.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/offers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers"]
+            }
+          }
+        },
+        {
+          "name": "Listar Ofertas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/offers?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar Ofertas com Filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/offers?category=tecnologia&minDiscount=20&maxPrice=3000&search=smartphone",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "tecnologia"
+                },
+                {
+                  "key": "minDiscount",
+                  "value": "20"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "3000"
+                },
+                {
+                  "key": "search",
+                  "value": "smartphone"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obter Oferta por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/offers/{{offer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers", "{{offer_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Minhas Ofertas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/offers/my/offers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers", "my", "offers"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Oferta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Smartphone Samsung Galaxy S23 - OFERTA ESPECIAL\",\n  \"description\": \"Smartphone top de linha com câmera de 200MP - PREÇO IMPERDÍVEL!\",\n  \"category\": \"tecnologia\",\n  \"originalPrice\": 2999.99,\n  \"discountPrice\": 2199.99,\n  \"validUntil\": \"2024-12-31T23:59:59.000Z\",\n  \"tags\": [\"smartphone\", \"samsung\", \"android\", \"oferta\"],\n  \"imageUrl\": \"https://exemplo.com/imagem.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/offers/{{offer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers", "{{offer_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Oferta",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/offers/{{offer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers", "{{offer_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Estatísticas Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/offers/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "offers", "admin", "stats"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    }
+  ]
+}
